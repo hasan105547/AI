@@ -1,0 +1,41 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+# Load the data
+data = pd.read_csv(r"F:\PDF-3.1\Salary_Data.csv")
+x = data.iloc[:, : -1].values
+y = data.iloc[:, -1].values
+# Split the data into training and testing sets
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
+# Create and train the Linear Regression model
+LR = LinearRegression()
+LR.fit(x_train, y_train)
+# Make predictions on the test set
+predictions = LR.predict(x_test)
+print(predictions)
+# Plot Training set results
+plt.scatter(x_train, y_train, color='red')
+plt.plot(x_train, LR.predict(x_train), color='blue')
+plt.title('Salary vs Experience (Training set)')
+plt.xlabel('Years of Experience')
+plt.ylabel('Salary')
+plt.show()
+# Plot Test set results
+plt.scatter(x_test, y_test, color='red')
+plt.plot(x_train, LR.predict(x_train), color='blue')
+plt.title('Salary vs Experience (Test set)')
+plt.xlabel('Years of Experience')
+plt.ylabel('Salary')
+plt.show()
+
+print("y test is")
+y_test
+print(y_test)
+
+from sklearn.metrics import r2_score
+r2 = r2_score(y_test, predictions)
+print("R-squared:", r2)
+
+
+
