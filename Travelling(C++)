@@ -1,0 +1,68 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int n;
+int arr[20][20];
+int dp[1 << 20][20];
+int parent[1 << 20][20]; // track which city was chosen
+
+int tsp(int mask, int pos)
+{
+    if (mask == (1 << n) - 1)
+        return arr[pos][0];
+
+    if (dp[mask][pos] != -1)
+        return dp[mask][pos];
+
+    int ans = INT_MAX;
+
+    for (int city = 0; city < n; city++)
+    {
+        if ((mask & (1 << city)) == 0)
+        {
+            int newAns = arr[pos][city] + tsp(mask | (1 << city), city);
+            if (newAns < ans)
+            {
+                ans = newAns;
+                parent[mask][pos] = city; // save the best next city
+            }
+        }
+    }
+
+    return dp[mask][pos] = ans;
+}
+
+void printPath()
+{
+    int mask = 1, pos = 0;
+    cout << "Path: 0";
+
+    while (mask != (1 << n) - 1)
+    {
+        int next = parent[mask][pos];
+        cout << " -> " << next;
+        mask |= (1 << next);
+        pos = next;
+    }
+
+    cout << " -> 0" << endl; // return to start
+}
+
+int main()
+{
+    cout << "Enter the number of city: ";
+    cin >> n;
+
+    cout << "Enter the cost between cities:\n";
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> arr[i][j];
+
+    memset(dp, -1, sizeof(dp));
+    memset(parent, -1, sizeof(parent));
+
+    cout << "Minimum cost: " << tsp(1, 0) << endl;
+    printPath();
+
+    return 0;
+}
