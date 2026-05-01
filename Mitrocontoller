@@ -1,0 +1,56 @@
+sbit LCD_RS at RB0_bit;
+sbit LCD_EN at RB1_bit;
+sbit LCD_D4 at RB4_bit;
+sbit LCD_D5 at RB5_bit;
+sbit LCD_D6 at RB6_bit;
+sbit LCD_D7 at RB7_bit;
+
+sbit LCD_RS_Direction at TRISB0_bit;
+sbit LCD_EN_Direction at TRISB1_bit;
+sbit LCD_D4_Direction at TRISB4_bit;
+sbit LCD_D5_Direction at TRISB5_bit;
+sbit LCD_D6_Direction at TRISB6_bit;
+sbit LCD_D7_Direction at TRISB7_bit;
+
+char txt[16];
+
+void main() {
+
+    unsigned int adc_value;
+    float experience;
+    float salary;
+
+    TRISA = 0xFF;   // PORTA input (ADC)
+    TRISB = 0x00;   // PORTB output (LCD)
+    PORTB = 0x00;
+
+    ADC_Init();
+    ADCON1 = 0x80;   // Configure AN0 as analog
+
+    Lcd_Init();
+    Lcd_Cmd(_LCD_CLEAR);
+    Lcd_Cmd(_LCD_CURSOR_OFF);
+
+    while(1) {
+
+        adc_value = ADC_Read(0);
+
+        // Convert ADC value to experience (0–10 years)
+        experience = (adc_value * 10.0) / 1023.0;
+
+        // Linear Regression Equation
+        salary = (9379.71049 * experience) + 26986.6913;
+
+        // Display Experience
+        Lcd_Out(1,1,"Exp:");
+        FloatToStr(experience, txt);
+        Lcd_Out(1,5,txt);
+
+        // Display Salary
+        Lcd_Out(2,1,"Sal:");
+        FloatToStr(salary, txt);
+        Lcd_Out(2,5,txt);
+
+        Delay_ms(500);
+    }
+}
